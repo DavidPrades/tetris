@@ -30,6 +30,18 @@ public class Shape {
 
     }
     
+    public Shape(){
+        
+        int randomNumber = (int) (Math.random()*7+1);
+        pieceShape = Tetrominoes.values()[randomNumber];
+        coordinates = coordsTable[randomNumber];
+    }
+    
+    public static Shape getRandomShape(){
+        
+        return new Shape();
+    }
+    
     public int[][] getCoordinates(){
         return coordinates;
     }
