@@ -75,8 +75,8 @@ public class Shape {
     public int getYmin() {
         int candidate = coordinates[0][0];
         for (int i = 1; i < coordinates.length; i++) {
-            if (coordinates[i][i] < candidate) {
-                candidate = coordinates[i][i];
+            if (coordinates[i][1] < candidate) {
+                candidate = coordinates[i][1];
             }
         }
         return candidate;
@@ -86,8 +86,8 @@ public class Shape {
     public int getYmax() {
         int candidate = coordinates[0][0];
         for (int i = 1; i < coordinates.length; i++) {
-            if (coordinates[0][i] > candidate) {
-                candidate = coordinates[i][i];
+            if (coordinates[i][1] > candidate) {
+                candidate = coordinates[i][1];
             }
         }
         return candidate;
