@@ -9,44 +9,88 @@
  * @author alu20908719v
  */
 public class Shape {
-    
+
     private Tetrominoes pieceShape;
-    private int [][] coordinates;
-    
-    private static int[][][] coordsTable = new int[][][] {
-            { { 0, 0 },   { 0, 0 },   { 0, 0 },   { 0, 0 } },
-            { { 0, -1 },  { 0, 0 },   { -1, 0 },  { -1, 1 } },
-            { { 0, -1 },  { 0, 0 },   { 1, 0 },   { 1, 1 } },
-            { { 0, -1 },  { 0, 0 },   { 0, 1 },   { 0, 2 } },
-            { { -1, 0 },  { 0, 0 },   { 1, 0 },   { 0, 1 } },
-            { { 0, 0 },   { 1, 0 },   { 0, 1 },   { 1, 1 } },
-            { { -1, -1 }, { 0, -1 },  { 0, 0 },   { 0, 1 } },
-            { { 1, -1 },  { 0, -1 },  { 0, 0 },   { 0, 1 } }
+    private int[][] coordinates;
+
+    private static int[][][] coordsTable = new int[][][]{
+        {{0, 0}, {0, 0}, {0, 0}, {0, 0}},
+        {{0, -1}, {0, 0}, {-1, 0}, {-1, 1}},
+        {{0, -1}, {0, 0}, {1, 0}, {1, 1}},
+        {{0, -1}, {0, 0}, {0, 1}, {0, 2}},
+        {{-1, 0}, {0, 0}, {1, 0}, {0, 1}},
+        {{0, 0}, {1, 0}, {0, 1}, {1, 1}},
+        {{-1, -1}, {0, -1}, {0, 0}, {0, 1}},
+        {{1, -1}, {0, -1}, {0, 0}, {0, 1}}
     };
-    
-    public Shape(Tetrominoes pieceShape){
-        this.pieceShape=pieceShape;
+
+    public Shape(Tetrominoes pieceShape) {
+        this.pieceShape = pieceShape;
         coordinates = coordsTable[pieceShape.ordinal()];
 
     }
-    
-    public Shape(){
-        
-        int randomNumber = (int) (Math.random()*7+1);
+
+    public Shape() {
+
+        int randomNumber = (int) (Math.random() * 7 + 1);
         pieceShape = Tetrominoes.values()[randomNumber];
         coordinates = coordsTable[randomNumber];
     }
-    
-    public static Shape getRandomShape(){
-        
+
+    public static Shape getRandomShape() {
+
         return new Shape();
     }
-    
-    public int[][] getCoordinates(){
+
+    public int[][] getCoordinates() {
         return coordinates;
     }
-    public Tetrominoes getShape(){
+
+    public Tetrominoes getShape() {
         return pieceShape;
     }
-    
+
+    public int getXmin() {
+
+        int candidate = coordinates[0][0];
+        for (int i = 1; i < coordinates.length; i++) {
+            if (coordinates[i][0] < candidate) {
+                candidate = coordinates[i][0];
+            }
+        }
+        return candidate;
+    }
+
+    public int getXmax() {
+        int candidate = coordinates[0][0];
+        for (int i = 1; i < coordinates.length; i++) {
+            if (coordinates[i][0] > candidate) {
+                candidate = coordinates[i][0];
+            }
+        }
+        return candidate;
+
+    }
+
+    public int getYmin() {
+        int candidate = coordinates[0][0];
+        for (int i = 1; i < coordinates.length; i++) {
+            if (coordinates[i][i] < candidate) {
+                candidate = coordinates[i][i];
+            }
+        }
+        return candidate;
+
+    }
+
+    public int getYmax() {
+        int candidate = coordinates[0][0];
+        for (int i = 1; i < coordinates.length; i++) {
+            if (coordinates[0][i] > candidate) {
+                candidate = coordinates[i][i];
+            }
+        }
+        return candidate;
+    }
+
 }
