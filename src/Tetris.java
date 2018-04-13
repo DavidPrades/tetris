@@ -15,6 +15,7 @@ public class Tetris extends javax.swing.JFrame {
      */
     public Tetris() {
         initComponents();
+        board.setScore(scoreBoard);
     }
 
     /**
@@ -66,6 +67,11 @@ public class Tetris extends javax.swing.JFrame {
                 jMenuItem1ActionPerformed(evt);
             }
         });
+        jMenuItem1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jMenuItem1KeyPressed(evt);
+            }
+        });
         jMenuInitGame.add(jMenuItem1);
 
         jMenuBar1.add(jMenuInitGame);
@@ -82,6 +88,7 @@ public class Tetris extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        
         board.initGame();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -89,6 +96,10 @@ public class Tetris extends javax.swing.JFrame {
        
      
     }//GEN-LAST:event_boardKeyPressed
+
+    private void jMenuItem1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jMenuItem1KeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1KeyPressed
 
     /**
      * @param args the command line arguments

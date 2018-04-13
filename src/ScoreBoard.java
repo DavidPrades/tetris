@@ -11,7 +11,7 @@ import javax.swing.JLabel;
  *
  * @author alu20908719v
  */
-public class ScoreBoard extends JLabel {
+public class ScoreBoard extends JLabel implements IncrementScore{
     
     
     private int score;
@@ -21,13 +21,24 @@ public class ScoreBoard extends JLabel {
         super();
         score=0;
     }
-    
-    public void increment(int points){
+   
+        public void increment(int points) {
+         score += points;
+        setText(""+score);
         
-        score += points;
     }
-    
     public void reset(){
         score=0;
+         setText(""+score);
     }
+
+    @Override
+    public int getScore() {
+        return score;
+    }
+
+
+
+
+   
 }

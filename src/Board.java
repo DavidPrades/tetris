@@ -25,25 +25,42 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
-                    if (canMoveTo(currentRow, currentCol - 1)) {
+                    if (canMoveTo(currentShape, currentRow, currentCol - 1)) {
                         currentCol--;
-                        break;
+
                     }
+                    break;
                 case KeyEvent.VK_RIGHT:
-                    if (canMoveTo(currentRow, currentCol + 1)) {
+                    if (canMoveTo(currentShape, currentRow, currentCol + 1)) {
                         currentCol++;
                     }
                     break;
                 case KeyEvent.VK_UP:
-                    // whatever
+                    Shape rotShape = currentShape.rotateRight();
+                    if (canMoveTo(currentShape, currentRow, currentCol)) {
+                        currentShape = rotShape;
+                    }
                     break;
                 case KeyEvent.VK_DOWN:
 
-                    if (canMoveTo(currentRow + 1, currentCol)) {
+                    if (canMoveTo(currentShape, currentRow + 1, currentCol)) {
                         currentRow++;
                     }
 
                     break;
+                case KeyEvent.VK_P:
+                    if (timer.isRunning()) {
+                        timer.stop();
+                    } else {
+                        timer.start();
+                    }
+                    break;
+                case KeyEvent.VK_ENTER:
+                    if (timer.isRunning()) {
+                        initGame();
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -61,8 +78,11 @@ public class Board extends JPanel implements ActionListener {
     private int currentRow;
     private int currentCol;
 
+    public IncrementScore scoreDelegate;
+
     private Timer timer;
     public static final int INIT_ROW = -2;
+    
 
     public Board() {
         super();
@@ -75,12 +95,22 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
+    public void setScore(IncrementScore score) {
+        this.scoreDelegate = score;
+    }
+
     public void initGame() {
         initValues();
         currentShape = new Shape();
         addKeyListener(keyAdapter);
         timer.start();
 
+    }
+     public void gameOver(){
+         timer.stop();
+         scoreDelegate.getScore();
+         
+        
     }
 
     public void initValues() {
@@ -101,32 +131,98 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private boolean canMoveTo(int newRow, int newCol) {
+    private boolean canMoveTo(Shape shape, int newRow, int newCol) {
 
-        if (newCol + currentShape.getXmin() < 0 || newCol + currentShape.getXmax() >= NUM_COLS || currentRow + currentShape.getYmax() >= NUM_ROWS - 1) {
+        if (newCol + shape.getXmin() < 0
+                || newCol + shape.getXmax() >= NUM_COLS
+                || newRow + shape.getYmax() >= NUM_ROWS
+                || hitWithMatrix(shape, newRow, newCol)) {
             return false;
-            
+
         }
-        ifThereIsAPiece(NewRow, newCol);
         return true;
-        
+
     }
-    private boolean ifThereIsAPiece(int newRow, int newCol){
-        
+
+    private boolean hitWithMatrix(Shape shape, int newRow, int newCol) {
+
+        int[][] squaresArray = shape.getCoordinates();
+        int row;
+        int col;
+        for (int point = 0; point <= 3; point++) {
+            row = newRow + squaresArray[point][1];
+            col = newCol + squaresArray[point][0];
+            if (row >= 0) {
+                if (matrix[row][col] != Tetrominoes.NoShape) {
+                    return true;
+
+                }
+            }
+        }
+        return false;
+
     }
 
     //Game Main loop
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if (canMoveTo(currentRow + 1, currentCol)) {
+        if (canMoveTo(currentShape, currentRow + 1, currentCol)) {
             currentRow++;
             repaint();
         } else {
+            checkGameOver();
             moveCurrentShapeToMatrix();
             currentShape = new Shape();
             currentRow = INIT_ROW;
-            currentCol=NUM_COLS/2;
+            currentCol = NUM_COLS / 2;
+            checkRows();
         }
+
+    }
+    public void checkGameOver(){
+        int[][] squaresArray = currentShape.getCoordinates();
+
+        for (int point = 0; point <= 3; point++) {
+            if(currentRow+squaresArray[point][1]<0){
+               gameOver();
+                        
+            }
+           
+        }
+        
+    }
+   
+
+    public void checkRows() {
+        boolean clean = true;
+        for (int row = 0; row < NUM_ROWS; row++) {
+            clean = true;
+
+            for (int col = 0; col < NUM_COLS; col++) {
+                if (matrix[row][col] == Tetrominoes.NoShape) {
+                    clean = false;
+                }
+            }
+            if (clean) {
+                cleanRow(row);
+            }
+
+        }
+    }
+
+    public void cleanRow(int rowCompleted) {
+
+        for (int row = rowCompleted; row >= 1; row--) {
+            for (int col = 0; col < NUM_COLS; col++) {
+                matrix[row][col] = matrix[row - 1][col];
+
+            }
+        }
+        for (int col = 0; col < NUM_COLS; col++) {
+            matrix[0][col] = Tetrominoes.NoShape;
+        }
+        repaint();
+        scoreDelegate.increment(100);
 
     }
 
@@ -134,7 +230,7 @@ public class Board extends JPanel implements ActionListener {
         int[][] squaresArray = currentShape.getCoordinates();
 
         for (int point = 0; point <= 3; point++) {
-           matrix[currentRow+squaresArray[point][1]][currentCol+squaresArray[point][0]]=currentShape.getShape();
+            matrix[currentRow + squaresArray[point][1]][currentCol + squaresArray[point][0]] = currentShape.getShape();
         }
     }
 
