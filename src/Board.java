@@ -56,7 +56,7 @@ public class Board extends JPanel implements ActionListener {
                     }
                     break;
                 case KeyEvent.VK_ENTER:
-                    if (timer.isRunning()) {
+                    if(! timer.isRunning()){
                         initGame();
                     }
                     break;
@@ -82,7 +82,6 @@ public class Board extends JPanel implements ActionListener {
 
     private Timer timer;
     public static final int INIT_ROW = -2;
-    
 
     public Board() {
         super();
@@ -106,12 +105,42 @@ public class Board extends JPanel implements ActionListener {
         timer.start();
 
     }
-     public void gameOver(){
-         timer.stop();
-         scoreDelegate.getScore();
-         
-        
-    }
+
+    public void gameOver() {
+        timer.stop();
+        scoreDelegate.getScore();
+        timer = new Timer(50, new ActionListener() {
+            int row = 0;
+            int col =0;
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                currentShape=null;
+                if (row != NUM_ROWS && col != NUM_COLS) {
+
+                    matrix[row][col] = Tetrominoes.LShape;
+                    if (col < NUM_COLS) {
+                        col++;
+
+                    }
+                    if (col == NUM_COLS) {
+                        row++;
+                        col = 0;
+                    }
+                    repaint();
+                }
+            }
+        });
+        timer.start();
+    } 
+                
+
+    /*for (int row = 0; row < NUM_ROWS; row++) {
+            for (int col = 0; col < NUM_COLS; col++) {
+                matrix[row][col] = Tetrominoes.LShape;
+                repaint();
+
+            }*/
 
     public void initValues() {
         setFocusable(true);
@@ -152,7 +181,7 @@ public class Board extends JPanel implements ActionListener {
         for (int point = 0; point <= 3; point++) {
             row = newRow + squaresArray[point][1];
             col = newCol + squaresArray[point][0];
-            if (row >= 0) {
+            if (row >= 0 && row < NUM_ROWS) {
                 if (matrix[row][col] != Tetrominoes.NoShape) {
                     return true;
 
@@ -179,19 +208,22 @@ public class Board extends JPanel implements ActionListener {
         }
 
     }
-    public void checkGameOver(){
+        
+
+    public boolean checkGameOver() {
         int[][] squaresArray = currentShape.getCoordinates();
 
         for (int point = 0; point <= 3; point++) {
-            if(currentRow+squaresArray[point][1]<0){
-               gameOver();
-                        
+            if (currentRow + squaresArray[point][1] < 0) {
+                timer.stop();
+                gameOver();
+                return true;
             }
-           
+
         }
-        
+        return false;
+
     }
-   
 
     public void checkRows() {
         boolean clean = true;
@@ -221,9 +253,15 @@ public class Board extends JPanel implements ActionListener {
         for (int col = 0; col < NUM_COLS; col++) {
             matrix[0][col] = Tetrominoes.NoShape;
         }
-        repaint();
         scoreDelegate.increment(100);
+        decrementDelay();
+        repaint();
+        
 
+    }
+    public void decrementDelay(){
+        deltaTime*=0.9;
+        timer.setDelay(deltaTime);
     }
 
     private void moveCurrentShapeToMatrix() {

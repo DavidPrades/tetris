@@ -37,7 +37,7 @@ public class Tetris extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        scoreBoard.setText("scoreBoard1");
+        scoreBoard.setText("0");
         getContentPane().add(scoreBoard, java.awt.BorderLayout.PAGE_END);
 
         board.addKeyListener(new java.awt.event.KeyAdapter() {
